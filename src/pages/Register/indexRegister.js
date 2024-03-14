@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { isEmail } from 'validator';
-import get from 'lodash';
 import { useSelector } from 'react-redux';
 import axios from '../../services/axios';
 import { Section } from './styledRegister';
@@ -61,9 +60,16 @@ export default function Register() {
       toast.success('Usuário criado com sucesso');
       navigate('/login'); // Leva o usuário para a página /login
     } catch (e) {
-      const errors = get(e, 'response.data.errors', []); // Se dentro de (e) NÃO tiver 'response.data.errors', errors receberá []
+      setIsLoading(false);
 
-      errors.map((error) => toast.error(error)); // Pega os erros no backend
+      if (e.response.data.errors) {
+        // Verifica se tem alguma mensagem de erro enviado pelo res.json
+        const { errors } = e.response.data;
+        errors.map((error) => toast.error(error));
+        return;
+      }
+
+      toast.error('Ocorreu um erro');
     }
   }
 

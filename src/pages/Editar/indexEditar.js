@@ -106,9 +106,16 @@ export default function Editar() {
       setIsLoading(false);
       toast.success('Conta editada com sucesso');
     } catch (e) {
-      const errors = get(e, 'response.data.errors', []); // Se dentro de (e) NÃO tiver 'response.data.errors', errors receberá []
+      setIsLoading(false);
 
-      errors.map((error) => toast.error(error)); // Pega os erros no backend
+      if (e.response.data.errors) {
+        // Verifica se tem alguma mensagem de erro enviado pelo res.json
+        const { errors } = e.response.data;
+        errors.map((error) => toast.error(error));
+        return;
+      }
+
+      toast.error('Ocorreu um erro');
     }
   }
 
@@ -134,9 +141,16 @@ export default function Editar() {
       setIsLoading(false);
       location.reload();
     } catch (e) {
-      const errors = get(e, 'response.data.errors', []); // Se dentro de (e) NÃO tiver 'response.data.errors', errors receberá []
+      setIsLoading(false);
 
-      errors.map((error) => toast.error(error.code)); // Pega os erros no backend
+      if (e.response.data.errors) {
+        // Verifica se tem alguma mensagem de erro enviado pelo res.json
+        const { errors } = e.response.data;
+        errors.map((error) => toast.error(error));
+        return;
+      }
+
+      toast.error('Ocorreu um erro');
     }
   }
 

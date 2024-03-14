@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { get } from 'lodash';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa6';
 
@@ -80,11 +79,16 @@ export default function Home() {
 
       return toast.success('Tarefa criada com sucesso');
     } catch (e) {
-      const errors = get(e, 'response.data.errors', []); // Se dentro de (e) NÃO tiver 'response.data.errors', errors receberá []
+      setIsLoading(false);
 
-      errors.map((error) => toast.error(error)); // Pega os erros no backend
+      if (e.response.data.errors) {
+        // Verifica se tem alguma mensagem de erro enviado pelo res.json
+        const { errors } = e.response.data;
+        errors.map((error) => toast.error(error));
+        return '';
+      }
 
-      return '';
+      return toast.error('Ocorreu um erro');
     }
   }
 
@@ -119,11 +123,16 @@ export default function Home() {
 
       return toast.success('Tarefa editada com sucesso');
     } catch (e) {
-      const errors = get(e, 'response.data.errors', []); // Se dentro de (e) NÃO tiver 'response.data.errors', errors receberá []
+      setIsLoading(false);
 
-      errors.map((error) => toast.error(error)); // Pega os erros no backend
+      if (e.response.data.errors) {
+        // Verifica se tem alguma mensagem de erro enviado pelo res.json
+        const { errors } = e.response.data;
+        errors.map((error) => toast.error(error));
+        return '';
+      }
 
-      return '';
+      return toast.error('Ocorreu um erro');
     }
   }
 
@@ -140,11 +149,16 @@ export default function Home() {
       setIsLoading(false);
       return toast.success('Tarefa deletada com sucesso');
     } catch (e) {
-      const errors = get(e, 'response.data.errors', []); // Se dentro de (e) NÃO tiver 'response.data.errors', errors receberá []
+      setIsLoading(false);
 
-      errors.map((error) => toast.error(error)); // Pega os erros no backend
+      if (e.response.data.errors) {
+        // Verifica se tem alguma mensagem de erro enviado pelo res.json
+        const { errors } = e.response.data;
+        errors.map((error) => toast.error(error));
+        return '';
+      }
 
-      return '';
+      return toast.error('Ocorreu um erro');
     }
   }
 
