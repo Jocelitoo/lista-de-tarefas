@@ -24,7 +24,6 @@ export const loginSlice = createSlice({
 
     // Se a type(ação) de nome 'LOGIN/SUCESS' for disparada pro redux, executa o código abaixo --> if('click/sucess' === type){...}
     SUCESS: (state = initialState, action = '') => {
-      console.log('Sucess', action.payload);
       const newState = { ...state };
       newState.isLoggedIn = true;
       newState.token = action.payload.token;
