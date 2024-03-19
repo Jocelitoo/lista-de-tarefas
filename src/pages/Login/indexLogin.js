@@ -65,17 +65,15 @@ export default function Login() {
     } catch (e) {
       setIsLoading(false);
 
+      // Verificar se tem alguma mensagem de erro enviado pelo res.json
       if (e.response.data.errors) {
-        // Verifica se tem alguma mensagem de erro enviado pelo res.json
         const { errors } = e.response.data;
         errors.map((error) => toast.error(error));
         return;
       }
 
-      toast.error('Ocorreu um erro');
+      toast.error('Email ou senha inválido');
     }
-
-    // dispatch(actions.loginRequest({ email, password })); // Executa a function loginRequest() que manda o type(ação) LOGIN/REQUEST para o redux e o Email e password são enviados pro payload dessa function
   }
 
   return (
