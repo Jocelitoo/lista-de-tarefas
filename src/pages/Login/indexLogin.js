@@ -46,8 +46,8 @@ export default function Login() {
 
     if (formErrors) return; // Se houver algum erro, esse IF será TRUE e terminará aqui a function handleSubmit
 
-    // Logar usuário
     try {
+      // Logar usuário
       setIsLoading(true);
 
       const response = await axios.post('/tokens', {
@@ -55,11 +55,12 @@ export default function Login() {
         password,
       });
 
-      actions.loginSucess({ ...response.data });
+      dispatch(actions.loginSucess(response.data));
 
       axios.defaults.headers.Authorization = `Bearer ${response.data.token}`;
 
       setIsLoading(false);
+
       toast.success('Usuário logado');
     } catch (e) {
       setIsLoading(false);
