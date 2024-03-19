@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import isEmail from 'validator/lib/isEmail';
@@ -6,10 +7,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Section } from './styledLogin';
 import { Loading } from '../../components/Loading/indexLoading';
 import * as actions from '../../store/modules/login/loginActions'; // Importa todos os elementos exportados do arquivo authActions.js
+import axios from '../../services/axios';
 
 export default function Login() {
   const isLoggedIn = useSelector((state) => state.LOGIN.isLoggedIn); // Acessa o redux store e pega o initialState isLoggedIn do loginSlice --> Será usado pra saber se usuário está logado ou não
-  const isLoading = useSelector((state) => state.LOGIN.isLoading); // Acessa o redux store e pega o isLoading do loginSlice --> Será usado pra saber se está carregado ou não
+  // const isLoading = useSelector((state) => state.LOGIN.isLoading); // Acessa o redux store e pega o isLoading do loginSlice --> Será usado pra saber se está carregado ou não
 
   const dispatch = useDispatch(); // Dispara as types(ações) pro redux
   const navigate = useNavigate(); // Usado para navegar entre páginas
@@ -17,6 +19,7 @@ export default function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   // Redirecionar usuário pra fora da página '/login', caso ele já esteja logado
   useEffect(() => {
@@ -44,7 +47,34 @@ export default function Login() {
     if (formErrors) return; // Se houver algum erro, esse IF será TRUE e terminará aqui a function handleSubmit
 
     // Logar usuário
-    dispatch(actions.loginRequest({ email, password })); // Executa a function loginRequest() que manda o type(ação) LOGIN/REQUEST para o redux e o Email e password são enviados pro payload dessa function
+    try {
+      setIsLoading(true);
+
+      const response = await axios.post('/tokens', {
+        email,
+        password,
+      });
+
+      actions.loginSucess({ ...response.data });
+
+      axios.defaults.headers.Authorization = `Bearer ${response.data.token}`;
+
+      setIsLoading(false);
+      toast.success('Usuário logado');
+    } catch (e) {
+      setIsLoading(false);
+
+      if (e.response.data.errors) {
+        // Verifica se tem alguma mensagem de erro enviado pelo res.json
+        const { errors } = e.response.data;
+        errors.map((error) => toast.error(error));
+        return;
+      }
+
+      toast.error('Ocorreu um erro');
+    }
+
+    // dispatch(actions.loginRequest({ email, password })); // Executa a function loginRequest() que manda o type(ação) LOGIN/REQUEST para o redux e o Email e password são enviados pro payload dessa function
   }
 
   return (
